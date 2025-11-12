@@ -1,0 +1,5 @@
+<?php if ((defined('TL_SCRIPT') && strpos((string)TL_SCRIPT, 'contao') !== false) || (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/contao') !== false)) { return; } ?>
+<?php if (!defined('TL_MODE') || TL_MODE !== 'BE'): ?>
+  </div>
+</section>
+<?php endif; ?>

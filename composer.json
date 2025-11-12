@@ -1,0 +1,24 @@
+{
+  "name": "dievirtuellecouch/contao-subcolumns",
+  "description": "Subcolumns (Spaltenset) for Contao 5 – legacy compatible CE + form widgets",
+  "type": "contao-bundle",
+  "version": "1.0.1",
+  "license": "proprietary",
+  "require": {
+    "php": ">=8.2",
+    "contao/core-bundle": "^5.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Websailing\\SubcolumnsBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "contao": "src/Resources/contao"
+      }
+    },
+    "contao-manager-plugin": "Websailing\\SubcolumnsBundle\\ContaoManager\\Plugin"
+  }
+}

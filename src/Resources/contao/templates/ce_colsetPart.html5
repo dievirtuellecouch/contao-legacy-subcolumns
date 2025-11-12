@@ -1,0 +1,22 @@
+<?php if ((defined('TL_SCRIPT') && strpos((string)TL_SCRIPT, 'contao') !== false) || (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/contao') !== false)) { return; } ?>
+<?php if (!defined('TL_MODE') || TL_MODE !== 'BE'): ?>
+  </div>
+  <?php
+    // Extract id/class from cssID (array in Contao 5)
+    $idAttr = '';
+    $classes = '';
+    if (!empty($this->cssID)) {
+      if (is_array($this->cssID)) {
+        $cid = trim((string)($this->cssID[0] ?? ''));
+        $ccl = trim((string)($this->cssID[1] ?? ''));
+        if ($cid !== '') { $idAttr = ' id="'.htmlspecialchars($cid, ENT_QUOTES).'"'; }
+        if ($ccl !== '') { $classes = trim($classes.' '.$ccl); }
+      } elseif (is_string($this->cssID)) {
+        if (preg_match('/ id=\"([^\"]*)\"/', $this->cssID, $m)) { $idAttr = ' id="'.$m[1].'"'; }
+        if (preg_match('/ class=\"([^\"]*)\"/', $this->cssID, $mc)) { $classes = trim($classes.' '.$mc[1]); }
+      }
+    }
+    if (!empty($this->class)) { $classes = trim($classes.' '.trim((string)$this->class)); }
+  ?>
+  <div<?php echo $idAttr; ?><?php echo ($classes!=='' ? ' class="'.$classes.'"' : ''); ?>>
+<?php endif; ?>

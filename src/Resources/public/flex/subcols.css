@@ -1,0 +1,89 @@
+/* Subcolumns Flex Layout (custom classes, no collision with legacy) */
+.sc-flex{display:flex;flex-wrap:wrap;width:100%;box-sizing:border-box;gap:var(--sc-gap,5px)}
+.sc-flex--equalize .sc-flex__col{align-self:stretch}
+.sc-flex__col{box-sizing:border-box;min-width:0}
+/* Default: equal columns without ratio classes (children divs) */
+.sc-flex > div{flex:1 1 0;min-width:0;box-sizing:border-box}
+
+/* Column widths via CSS variables set on the wrapper */
+.sc-flex > div:nth-child(1){flex:0 0 var(--sc-col-1, auto);max-width:var(--sc-col-1, auto)}
+.sc-flex > div:nth-child(2){flex:0 0 var(--sc-col-2, auto);max-width:var(--sc-col-2, auto)}
+.sc-flex > div:nth-child(3){flex:0 0 var(--sc-col-3, auto);max-width:var(--sc-col-3, auto)}
+.sc-flex > div:nth-child(4){flex:0 0 var(--sc-col-4, auto);max-width:var(--sc-col-4, auto)}
+.sc-flex > div:nth-child(5){flex:0 0 var(--sc-col-5, auto);max-width:var(--sc-col-5, auto)}
+.sc-flex > div:nth-child(6){flex:0 0 var(--sc-col-6, auto);max-width:var(--sc-col-6, auto)}
+
+/* When flex gap is supported, subtract the proportional gap so total <= 100% */
+@supports (gap: 1rem){
+  .sc-flex{--sc-gap-adjust: calc((var(--sc-gap, 5px) * (var(--sc-cols, 1) - 1)) / var(--sc-cols, 1))}
+  .sc-flex > div:nth-child(1){flex-basis:calc(var(--sc-col-1, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-1, auto) - var(--sc-gap-adjust))}
+  .sc-flex > div:nth-child(2){flex-basis:calc(var(--sc-col-2, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-2, auto) - var(--sc-gap-adjust))}
+  .sc-flex > div:nth-child(3){flex-basis:calc(var(--sc-col-3, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-3, auto) - var(--sc-gap-adjust))}
+  .sc-flex > div:nth-child(4){flex-basis:calc(var(--sc-col-4, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-4, auto) - var(--sc-gap-adjust))}
+  .sc-flex > div:nth-child(5){flex-basis:calc(var(--sc-col-5, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-5, auto) - var(--sc-gap-adjust))}
+  .sc-flex > div:nth-child(6){flex-basis:calc(var(--sc-col-6, auto) - var(--sc-gap-adjust));max-width:calc(var(--sc-col-6, auto) - var(--sc-gap-adjust))}
+}
+
+/* Fractions via flex-basis and max-width to keep wrapping predictable */
+/* Base fractions with stronger specificity to win over generic form styles */
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--1-2{flex:0 0 50%;max-width:50%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--1-3{flex:0 0 33.3333%;max-width:33.3333%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--2-3{flex:0 0 66.6667%;max-width:66.6667%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--1-4{flex:0 0 25%;max-width:25%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--3-4{flex:0 0 75%;max-width:75%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--1-5{flex:0 0 20%;max-width:20%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--2-5{flex:0 0 40%;max-width:40%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--3-5{flex:0 0 60%;max-width:60%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--4-5{flex:0 0 80%;max-width:80%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--3-10{flex:0 0 30%;max-width:30%}
+.sc-flex:not(.has-gap) > .sc-flex__col.sc-flex__col--7-10{flex:0 0 70%;max-width:70%}
+
+/* When flex-gap is supported, subtract proportional gap so total <=100% */
+@supports (gap: 1rem){
+  /* 2 columns: total gap = 1 * gap */
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--1-2{flex-basis:calc(50% - (var(--sc-gap,0)*0.5));max-width:calc(50% - (var(--sc-gap,0)*0.5))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--2-3{flex-basis:calc(66.6667% - (var(--sc-gap,0)*0.6667));max-width:calc(66.6667% - (var(--sc-gap,0)*0.6667))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--1-3{flex-basis:calc(33.3333% - (var(--sc-gap,0)*0.3333));max-width:calc(33.3333% - (var(--sc-gap,0)*0.3333))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--3-4{flex-basis:calc(75% - (var(--sc-gap,0)*0.75));max-width:calc(75% - (var(--sc-gap,0)*0.75))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--1-4{flex-basis:calc(25% - (var(--sc-gap,0)*0.25));max-width:calc(25% - (var(--sc-gap,0)*0.25))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--1-5{flex-basis:calc(20% - (var(--sc-gap,0)*0.2));max-width:calc(20% - (var(--sc-gap,0)*0.2))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--2-5{flex-basis:calc(40% - (var(--sc-gap,0)*0.4));max-width:calc(40% - (var(--sc-gap,0)*0.4))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--3-5{flex-basis:calc(60% - (var(--sc-gap,0)*0.6));max-width:calc(60% - (var(--sc-gap,0)*0.6))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--4-5{flex-basis:calc(80% - (var(--sc-gap,0)*0.8));max-width:calc(80% - (var(--sc-gap,0)*0.8))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--3-10{flex-basis:calc(30% - (var(--sc-gap,0)*0.3));max-width:calc(30% - (var(--sc-gap,0)*0.3))}
+  .sc-flex.has-gap.colcount_2 > .sc-flex__col.sc-flex__col--7-10{flex-basis:calc(70% - (var(--sc-gap,0)*0.7));max-width:calc(70% - (var(--sc-gap,0)*0.7))}
+
+  /* 3 columns: total gap = 2 * gap */
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--1-3{flex-basis:calc(33.3333% - (var(--sc-gap,0)*0.6667));max-width:calc(33.3333% - (var(--sc-gap,0)*0.6667))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--2-3{flex-basis:calc(66.6667% - (var(--sc-gap,0)*1.3333));max-width:calc(66.6667% - (var(--sc-gap,0)*1.3333))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--1-2{flex-basis:calc(50% - (var(--sc-gap,0)*1));max-width:calc(50% - (var(--sc-gap,0)*1))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--1-4{flex-basis:calc(25% - (var(--sc-gap,0)*0.5));max-width:calc(25% - (var(--sc-gap,0)*0.5))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--3-10{flex-basis:calc(30% - (var(--sc-gap,0)*0.6));max-width:calc(30% - (var(--sc-gap,0)*0.6))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--2-5{flex-basis:calc(40% - (var(--sc-gap,0)*0.8));max-width:calc(40% - (var(--sc-gap,0)*0.8))}
+  .sc-flex.has-gap.colcount_3 > .sc-flex__col.sc-flex__col--1-5{flex-basis:calc(20% - (var(--sc-gap,0)*0.4));max-width:calc(20% - (var(--sc-gap,0)*0.4))}
+
+  /* 4 columns: total gap = 3 * gap */
+  .sc-flex.has-gap.colcount_4 > .sc-flex__col.sc-flex__col--1-4{flex-basis:calc(25% - (var(--sc-gap,0)*0.75));max-width:calc(25% - (var(--sc-gap,0)*0.75))}
+}
+
+/* Optional: simple responsive fallback to stack on small screens */
+@media (max-width: 640px){
+  /* Force stacking on small screens, even if inline styles set widths */
+  .sc-flex{gap:0 !important; --sc-gap:0 !important}
+  .sc-flex > div{flex-basis:100% !important;max-width:100% !important}
+}
+
+/* Remove gap on mobile also for non-gap-supporting browsers */
+@media (max-width: 640px) {
+  @supports not (gap: 1rem){
+    .sc-flex{margin-left:0;margin-right:0}
+    .sc-flex > div{padding-left:0;padding-right:0}
+  }
+}
+
+/* Fallback for browsers without flex gap support */
+@supports not (gap: 1rem){
+  /* Simulate CSS gap using margins and paddings with default 5px */
+  .sc-flex{gap:0;margin-left:calc(var(--sc-gap,5px)/-2);margin-right:calc(var(--sc-gap,5px)/-2)}
+  .sc-flex > div{padding-left:calc(var(--sc-gap,5px)/2);padding-right:calc(var(--sc-gap,5px)/2)}
+}

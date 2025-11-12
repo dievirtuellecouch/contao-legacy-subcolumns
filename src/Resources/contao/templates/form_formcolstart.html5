@@ -1,0 +1,55 @@
+<?php if ((defined('TL_SCRIPT') && strpos((string)TL_SCRIPT, 'contao') !== false) || (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/contao') !== false)) { return; } ?>
+<?php if (!defined('TL_MODE') || TL_MODE !== 'BE'): ?>
+<?php
+  $wrapId = '';
+  if (!empty($this->fsc_wrap_id)) {
+    $wrapId = ' id="'.htmlspecialchars($this->fsc_wrap_id, ENT_QUOTES).'"';
+  }
+  $wrapClass = trim(($this->sc_wrapper_class ?? '').' '.($this->fsc_wrap_class ?? ''));
+  // Fallback: ensure wrapper gets a base class if none provided
+  if ($wrapClass === '') {
+    $setKey = isset($GLOBALS['TL_CONFIG']['subcolumns']) && $GLOBALS['TL_CONFIG']['subcolumns'] !== '' ? $GLOBALS['TL_CONFIG']['subcolumns'] : 'flex';
+    $base   = isset($GLOBALS['TL_SUBCL'][$setKey]['scclass']) ? $GLOBALS['TL_SUBCL'][$setKey]['scclass'] : 'sc-flex';
+    $eqCls  = isset($GLOBALS['TL_SUBCL'][$setKey]['equalize']) ? $GLOBALS['TL_SUBCL'][$setKey]['equalize'] : '';
+    $wrapClass = trim($base
+      . (!empty($this->fsc_gapuse) ? ' has-gap' : '')
+      . (!empty($this->fsc_equalize) && $eqCls !== '' ? (' '.$eqCls) : '')
+      . (!empty($this->class) ? (' '.$this->class) : '')
+    );
+  }
+
+  // Build per-section inline CSS variables from this start element
+  $styleVars = [];
+  $type = isset($this->fsc_type) ? trim((string)$this->fsc_type) : '';
+  if ($type !== '') {
+    $raw = array_values(array_filter(array_map('trim', explode('x', $type)), 'strlen'));
+    $colsCount = count($raw);
+    for ($i=0; $i<$colsCount; $i++) {
+      $num = preg_replace('~[^0-9]~', '', $raw[$i]);
+      if ($num !== '') {
+        $styleVars[] = '--sc-col-'.($i+1).': '.$num.'%';
+      }
+    }
+    if ($colsCount > 0) { $styleVars[] = '--sc-cols: '.$colsCount; }
+  }
+  // Gap handling per requirement:
+  // - If not checked -> gap = 0px
+  // - If checked and empty -> gap = 20px (or subcolumns_gapdefault)
+  // - If checked and set -> use value in px
+  if (empty($this->fsc_gapuse)) {
+    $styleVars[] = '--sc-gap: 0px';
+  } else {
+    $gapVal = isset($this->fsc_gap) ? trim((string)$this->fsc_gap) : '';
+    if ($gapVal === '') { $gapVal = (string)($GLOBALS['TL_CONFIG']['subcolumns_gapdefault'] ?? '20'); }
+    $gapInt = (int)$gapVal; if ($gapInt < 0) { $gapInt = 0; }
+    $styleVars[] = '--sc-gap: '.$gapInt.'px';
+  }
+  $wrapStyle = '';
+  if (!empty($styleVars)) { $wrapStyle = implode('; ', $styleVars); }
+
+  // No classes on inner div by default; wrapper controls layout
+  $colClass = '';
+?>
+<section class="<?php echo $wrapClass; ?>"<?php echo $wrapId; ?><?php if ($wrapStyle !== ''): ?> style="<?php echo $wrapStyle; ?>"<?php endif; ?>>
+  <div<?php echo ($colClass!=='' ? ' class="'.$colClass.'"' : ''); ?>>
+<?php endif; ?>

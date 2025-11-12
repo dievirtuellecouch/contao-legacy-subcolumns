@@ -1,0 +1,12 @@
+.subcolumns-flex{display:flex; gap: var(--col-gap, 0)}
+.subcolumns-flex.equalize > .col{display:flex; align-items:stretch}
+.subcolumns-flex .col{box-sizing:border-box}
+.col-25{flex:0 0 25%;max-width:25%}
+.col-30{flex:0 0 30%;max-width:30%}
+.col-33{flex:0 0 33.3333%;max-width:33.3333%}
+.col-40{flex:0 0 40%;max-width:40%}
+.col-50{flex:0 0 50%;max-width:50%}
+.col-60{flex:0 0 60%;max-width:60%}
+.col-66{flex:0 0 66.6666%;max-width:66.6666%}
+.col-70{flex:0 0 70%;max-width:70%}
+.col-75{flex:0 0 75%;max-width:75%}

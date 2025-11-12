@@ -1,0 +1,72 @@
+<?php if ((defined('TL_SCRIPT') && strpos((string)TL_SCRIPT, 'contao') !== false) || (!empty($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], '/contao') !== false)) { return; } ?>
+<?php if (!defined('TL_MODE') || TL_MODE !== 'BE'): ?>
+<?php
+  $wrapId = '';
+  if (!empty($this->sc_wrap_id)) {
+    $wrapId = ' id="'.htmlspecialchars($this->sc_wrap_id, ENT_QUOTES).'"';
+  }
+  // Extract cssID (array in Contao 5: [id, class]) and add class to wrapper
+  $cssId = '';
+  $cssCls = '';
+  if (!empty($this->cssID)) {
+    if (is_array($this->cssID)) {
+      $cssId  = trim((string)($this->cssID[0] ?? ''));
+      $cssCls = trim((string)($this->cssID[1] ?? ''));
+    } elseif (is_string($this->cssID)) {
+      if (preg_match('/ id=\"([^\"]*)\"/', $this->cssID, $m)) { $cssId = $m[1]; }
+      if (preg_match('/ class=\"([^\"]*)\"/', $this->cssID, $mc)) { $cssCls = $mc[1]; }
+    }
+  }
+  $wrapClass = trim(($this->sc_wrapper_class ?? '').' '.($this->sc_wrap_class ?? '').' '.$cssCls);
+  // Fallback: ensure wrapper gets a base class if none provided
+  if ($wrapClass === '') {
+    $setKey = isset($GLOBALS['TL_CONFIG']['subcolumns']) && $GLOBALS['TL_CONFIG']['subcolumns'] !== '' ? $GLOBALS['TL_CONFIG']['subcolumns'] : 'flex';
+    $base   = isset($GLOBALS['TL_SUBCL'][$setKey]['scclass']) ? $GLOBALS['TL_SUBCL'][$setKey]['scclass'] : 'sc-flex';
+    $eqCls  = isset($GLOBALS['TL_SUBCL'][$setKey]['equalize']) ? $GLOBALS['TL_SUBCL'][$setKey]['equalize'] : '';
+    $wrapClass = trim($base
+      . (!empty($this->sc_gapuse) ? ' has-gap' : '')
+      . (!empty($this->sc_equalize) && $eqCls !== '' ? (' '.$eqCls) : '')
+      . (!empty($this->class) ? (' '.$this->class) : '')
+    );
+  }
+
+  $colId = '';
+  if ($cssId !== '') {
+    $colId = ' id="'.htmlspecialchars($cssId, ENT_QUOTES).'"';
+  }
+  // Build per-section CSS variables from this start element
+  $styleVars = [];
+  $type = isset($this->sc_type) ? trim((string)$this->sc_type) : '';
+  if ($type !== '') {
+    $raw = array_values(array_filter(array_map('trim', explode('x', $type)), 'strlen'));
+    $colsCount = count($raw);
+    for ($i=0; $i<$colsCount; $i++) {
+      $num = preg_replace('~[^0-9]~', '', $raw[$i]);
+      if ($num !== '') {
+        $styleVars[] = '--sc-col-'.($i+1).': '.$num.'%';
+      }
+    }
+    if ($colsCount > 0) { $styleVars[] = '--sc-cols: '.$colsCount; }
+  }
+  // Gap handling per requirement:
+  // - If not checked -> gap = 0px
+  // - If checked and empty -> gap = 20px (or subcolumns_gapdefault)
+  // - If checked and set -> use value in px
+  if (empty($this->sc_gapuse)) {
+    $styleVars[] = '--sc-gap: 0px';
+  } else {
+    $gapVal = isset($this->sc_gap) ? trim((string)$this->sc_gap) : '';
+    if ($gapVal === '') { $gapVal = (string)($GLOBALS['TL_CONFIG']['subcolumns_gapdefault'] ?? '20'); }
+    $gapInt = (int)$gapVal; if ($gapInt < 0) { $gapInt = 0; }
+    $styleVars[] = '--sc-gap: '.$gapInt.'px';
+  }
+  $wrapStyle = '';
+  if (!empty($styleVars)) { $wrapStyle = implode('; ', $styleVars); }
+
+  // Inner div classes: allow passing through $this->class if set
+  $colClass = '';
+  if (!empty($this->class)) { $colClass = trim((string)$this->class); }
+?>
+<section class="<?php echo $wrapClass; ?>"<?php echo $wrapId; ?><?php if ($wrapStyle !== ''): ?> style="<?php echo $wrapStyle; ?>"<?php endif; ?>>
+  <div<?php echo $colId; ?><?php echo ($colClass!=='' ? ' class="'.$colClass.'"' : ''); ?>>
+<?php endif; ?>
